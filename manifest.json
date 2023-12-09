@@ -1,0 +1,27 @@
+{
+  "manifest_version": 2,
+  "name": "NYTimes Code Redeemer",
+  "version": "1.0",
+  "description": "Automatically resubscribes to the NYTimes using your library code",
+  "icons": {
+    "48": "icons/logo.png"
+  },
+  "browser_action": {
+    "default_icon": "icons/logo.png",
+    "default_title": "NYTimes Code Redeemer",
+    "default_popup": "popup/popup.html"
+  },
+  "permissions": [
+    "storage"
+  ],
+  "content_scripts": [
+    {
+      "matches": [
+        "*://*.nytimes.com/*"
+      ],
+      "js": [
+        "nytimes.js"
+      ]
+    }
+  ]
+}
