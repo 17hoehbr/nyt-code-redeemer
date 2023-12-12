@@ -30,7 +30,8 @@ browser.storage.local.get('giftCode')
       else {
         const observer = new MutationObserver(function (mutationsList, observer) {
           const welcomeAd = document.querySelector(".welcomeAd");
-          if (welcomeAd) {
+          const gateKeep = document.querySelector("#gateway-content");
+          if (welcomeAd || gateKeep) {
             window.location.href = url;
             observer.disconnect();
           };
