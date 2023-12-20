@@ -1,43 +1,46 @@
 const currentURL = window.location.href;
+let previousPage = "https://nytimes.com";
 
-browser.storage.local.get('giftCode')
-  .then(result => {
-    const giftCode = result.giftCode;
+Promise.all([
+  browser.storage.local.get('previousPage'),
+  browser.storage.local.get('giftCode')
+])
+  .then(([previousPageResult, giftCodeResult]) => {
+    previousPage = previousPageResult.previousPage;
+    const giftCode = giftCodeResult.giftCode;
     const url = 'https://www.nytimes.com/subscription/redeem?campaignId=888LK&gift_code=' + giftCode;
-    console.log(url);
+    console.log("Gift code: " + giftCode);
 
     if (giftCode) {
+      const observer = new MutationObserver(function (mutationsList, observer) {
+        const welcomeAd = document.querySelector(".welcomeAd");
+        const gateKeep = document.querySelector("#gateway-content");
+        const alreadySubscribed = document.querySelector('div[data-testid="already-subscriber-view"]');
+
+        if (welcomeAd || gateKeep) {
+          previousPage = window.location.href;
+          browser.storage.local.set({ 'previousPage': previousPage });
+          console.log("Previous page: " + previousPage);
+          window.location.href = url;
+        }
+
+        if (alreadySubscribed !== null) {
+          console.log("already subscribed");
+          window.location.href = previousPage;
+        }
+      });
+
+      observer.observe(document.body, { subtree: true, childList: true });
+
       if (currentURL.includes("subscription/redeem")) {
         const redeembtn = document.querySelector(".giftRedeem__submitButton");
         redeembtn.click();
       }
 
       if (currentURL.includes("welcome-subscriber/welcome")) {
-        window.location.href = "https://www.nytimes.com/";
+        console.log(previousPage);
+        window.location.href = previousPage;
       }
-
-      if (currentURL.includes("activate-access/access-code")) {
-        const observer = new MutationObserver(function (mutationsList, observer) {
-          const alreadySubscribed = document.querySelector('div[data-testid="already-subscriber-view"]');
-          if (alreadySubscribed !== null) {
-            console.log("already subscribed")
-            window.location.href = "https://www.nytimes.com/";
-          }
-        });
-        observer.observe(document.body, { subtree: true, childList: true });
-      }
-
-
-      const observer = new MutationObserver(function (mutationsList, observer) {
-        const welcomeAd = document.querySelector(".welcomeAd");
-        const gateKeep = document.querySelector("#gateway-content");
-        if (welcomeAd || gateKeep) {
-          window.location.href = url;
-          observer.disconnect();
-        };
-      });
-
-      observer.observe(document.body, { subtree: true, childList: true });
     }
   })
   .catch(error => {
