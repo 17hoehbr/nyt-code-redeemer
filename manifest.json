@@ -1,7 +1,7 @@
 {
   "manifest_version": 2,
   "name": "NYTimes Code Redeemer",
-  "version": "1.1",
+  "version": "1.2",
   "description": "Automatically resubscribes to the NYTimes using your library code",
   "icons": {
     "48": "icons/logo.png"
