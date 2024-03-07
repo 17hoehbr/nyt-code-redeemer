@@ -33,8 +33,13 @@ Promise.all([
       observer.observe(document.body, { subtree: true, childList: true });
 
       if (currentURL.includes("subscription/redeem")) {
-        const redeembtn = document.querySelector(".giftRedeem__submitButton");
+        const redeembtn = document.querySelector('[data-testid="btn-redeem"]');
         redeembtn.click();
+      }
+
+      if (currentURL.includes('activate-access/')) {
+        const getstartedbtn = document.querySelector('[data-testid="get-started-btn"]')
+        getstartedbtn.click()
       }
 
       if (currentURL.includes("welcome-subscriber/welcome")) {
